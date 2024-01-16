@@ -30,15 +30,16 @@ Backend of the Lili Bee Jewels website. Consisting of rest APIs.
 ## Usage
 
 To run the Django Rest Framework (DRF) server, follow these steps:
+1. Run Docker daemon, you can do this by running Docker Desktop itself.
 
-1. Open your command line or terminal and run the following command:
-```
-docker compose-up build
+2. Open your command line or terminal and run the following command:
+    ```
+    docker compose-up build
 
-NOTE: you need to have a .env file prior
-```
+    NOTE: you need to have a .env file prior
+    ```
 
-2. The server should now be running on the specified port. You can access it by opening a web browser and navigating to `http://localhost:<port>`, where `<port>` is the port number specified in the server configuration.
+3. The server should now be running on the specified port. You can access it by opening a web browser and navigating to `http://localhost:<port>`, where `<port>` is the port number specified in the server configuration.
 
 ## Contributing
 
