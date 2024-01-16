@@ -1,0 +1,41 @@
+name: lbjec-server
+services:
+  dev:
+    build: .
+    container_name: lbjec-server-dev
+    command: sh -c "python manage.py makemigrations --no-input && 
+          python manage.py migrate --no-input --settings=lbjec_backend.settings && python manage.py runserver 0.0.0.0:8000 && wait"
+    environment:
+      DJANGO_SETTINGS_MODULE: lbjec_backend.settings
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: lbjec_dev_db
+      DB_PORT: ${DB_PORT}
+      STATIC_URL: static/
+      STATIC_ROOT: os.path.join(BASE_DIR, 'staticfiles')
+      MEDIA_URL: /media/
+      MEDIA_ROOT: os.path.join(BASE_DIR, 'static/images')
+      SECRET_KEY: ${SECRET_KEY}
+      DEBUG: ${DEBUG}
+
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/lbjec-backend
+    working_dir: /lbjec-backend
+
+  lbjec_dev_db:
+    image: postgres:15
+    volumes:
+      - lbjec-dev:/var/lib/postgresql/lbjec-dev
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    container_name: lbjec-dev-db
+    ports:
+      - "5432:5432"
+
+volumes:
+  lbjec-dev:
