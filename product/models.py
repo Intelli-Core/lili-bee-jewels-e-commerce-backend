@@ -1,0 +1,107 @@
+import uuid
+from django.db import models
+from django.contrib.postgres.fields import ArrayField
+from shared.validators import validate_image
+from storages.backends.s3boto3 import S3Boto3Storage
+
+
+class ProductCategory(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
+    name = models.CharField(max_length=255, blank=False, null=False, unique=True)
+    description = models.TextField(blank=True, null=True)
+
+
+class ProductAttributes(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
+    metal = models.CharField(max_length=255, blank=False, null=False)
+    weight = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=False, null=False
+    )
+    sizes = ArrayField(
+        models.CharField(max_length=255, blank=True),
+        blank=True,
+        null=True,
+        default=list,
+    )
+
+
+class Product(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
+    name = models.CharField(max_length=255, blank=False, null=False, unique=True)
+    price = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=False, null=False, default=0.00
+    )
+    category = models.ForeignKey(
+        ProductCategory,
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+        related_name="product",
+    )
+    attributes = models.OneToOneField(
+        ProductAttributes,
+        on_delete=models.CASCADE,
+        related_name="product",
+        blank=True,
+        null=True,
+    )
+    description = models.TextField(blank=True, null=True)
+    caption = models.CharField(max_length=255, blank=True, null=True)
+    thumbnail = models.ImageField(
+        upload_to="product_images",
+        validators=[validate_image],
+        storage=S3Boto3Storage(),
+        blank=True,
+        null=True,
+    )
+
+
+class ProductOption(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
+    price = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=False, null=False, default=0.00
+    )
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+        related_name="options",
+    )
+    attributes = models.ForeignKey(
+        ProductAttributes,
+        on_delete=models.CASCADE,
+        related_name="options",
+        blank=False,
+        null=False,
+    )
+    thumbnail = models.ImageField(
+        upload_to="product_images",
+        validators=[validate_image],
+        storage=S3Boto3Storage(),
+        blank=True,
+        null=True,
+    )
+
+
+class ProductImage(models.Model):
+    image = models.ImageField(
+        upload_to="product_images",
+        validators=[validate_image],
+        storage=S3Boto3Storage(),
+        blank=True,
+        null=True,
+    )
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="media",
+    )
+
+    product_option = models.ForeignKey(
+        ProductOption,
+        on_delete=models.CASCADE,
+        related_name="media",
+        blank=True,
+        null=True,
+    )
