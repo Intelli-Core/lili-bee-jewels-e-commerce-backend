@@ -9,6 +9,26 @@ from .models import (
 )
 
 
+def _update_attributes(self, instance, attributes_data):
+    """A helper function for updating attributes
+
+    Args:
+        instance (object): The instance of the model
+        attributes_data (dict): The attributes data
+    """
+
+    if attributes_data:
+        if instance.attributes:
+            attributes_serializer = ProductAtrtributeSerializer(
+                instance.attributes, data=attributes_data, partial=True
+            )
+            if attributes_serializer.is_valid():
+                attributes_serializer.save()
+        else:
+            attributes = ProductAttributes.objects.create(**attributes_data)
+            instance.attributes = attributes
+
+
 class ProductCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductCategory
@@ -29,8 +49,10 @@ class ProductAtrtributeSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def update(self, instance, validated_data):
+        # Update all other fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
+
         instance.save()
         return instance
 
@@ -81,12 +103,11 @@ class ProductOptionSerializer(serializers.ModelSerializer):
 
         # Attributes
         attributes_data = validated_data.pop("attributes", None)
-        if attributes_data:
-            attributes_serializer = ProductAtrtributeSerializer(
-                instance.attributes, data=attributes_data, partial=True
-            )
-            if attributes_serializer.is_valid():
-                attributes_serializer.save()
+        _update_attributes(self, instance, attributes_data)
+
+        # Update all other fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
 
         instance.save()
         return instance
@@ -139,12 +160,12 @@ class ProductSerializer(serializers.ModelSerializer):
 
         # Attributes
         attributes_data = validated_data.pop("attributes", None)
-        if attributes_data:
-            attributes_serializer = ProductAtrtributeSerializer(
-                instance.attributes, data=attributes_data, partial=True
-            )
-            if attributes_serializer.is_valid():
-                attributes_serializer.save()
+        _update_attributes(self, instance, attributes_data)
+
+        # Update all other fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
         instance.save()
         return instance
 
