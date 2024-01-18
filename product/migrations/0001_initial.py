@@ -20,6 +20,8 @@ class Migration(migrations.Migration):
             name='ProductAttributes',
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
                 ('metal', models.CharField(max_length=255)),
                 ('weight', models.DecimalField(decimal_places=2, max_digits=10)),
                 ('sizes', django.contrib.postgres.fields.ArrayField(base_field=models.CharField(blank=True, max_length=255), blank=True, default=list, null=True, size=None)),
@@ -29,6 +31,8 @@ class Migration(migrations.Migration):
             name='ProductCategory',
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
                 ('name', models.CharField(max_length=255, unique=True)),
                 ('description', models.TextField(blank=True, null=True)),
             ],
@@ -37,6 +41,8 @@ class Migration(migrations.Migration):
             name='Product',
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
                 ('name', models.CharField(max_length=255, unique=True)),
                 ('price', models.DecimalField(decimal_places=2, default=0.0, max_digits=10)),
                 ('description', models.TextField(blank=True, null=True)),
@@ -50,6 +56,8 @@ class Migration(migrations.Migration):
             name='ProductOption',
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
                 ('price', models.DecimalField(decimal_places=2, default=0.0, max_digits=10)),
                 ('thumbnail', models.ImageField(blank=True, null=True, storage=storages.backends.s3.S3Storage(), upload_to='product_images', validators=[shared.validators.validate_image])),
                 ('attributes', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='options', to='product.productattributes')),
@@ -59,7 +67,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ProductImage',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
                 ('image', models.ImageField(blank=True, null=True, storage=storages.backends.s3.S3Storage(), upload_to='product_images', validators=[shared.validators.validate_image])),
                 ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='media', to='product.product')),
                 ('product_option', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='media', to='product.productoption')),
