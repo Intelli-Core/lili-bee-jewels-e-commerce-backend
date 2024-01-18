@@ -7,11 +7,15 @@ from storages.backends.s3boto3 import S3Boto3Storage
 
 class ProductCategory(models.Model):
     id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=255, blank=False, null=False, unique=True)
     description = models.TextField(blank=True, null=True)
 
 
 class ProductAttributes(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
     metal = models.CharField(max_length=255, blank=False, null=False)
     weight = models.DecimalField(
@@ -27,6 +31,8 @@ class ProductAttributes(models.Model):
 
 class Product(models.Model):
     id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=255, blank=False, null=False, unique=True)
     price = models.DecimalField(
         max_digits=10, decimal_places=2, blank=False, null=False, default=0.00
@@ -58,6 +64,8 @@ class Product(models.Model):
 
 class ProductOption(models.Model):
     id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     price = models.DecimalField(
         max_digits=10, decimal_places=2, blank=False, null=False, default=0.00
     )
@@ -85,6 +93,9 @@ class ProductOption(models.Model):
 
 
 class ProductImage(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(
         upload_to="product_images",
         validators=[validate_image],
