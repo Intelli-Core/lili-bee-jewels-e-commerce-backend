@@ -60,6 +60,7 @@ class Product(models.Model):
         blank=True,
         null=True,
     )
+    stock = models.PositiveIntegerField(default=0)
 
 
 class ProductOption(models.Model):
@@ -90,6 +91,7 @@ class ProductOption(models.Model):
         blank=True,
         null=True,
     )
+    stock = models.PositiveIntegerField(default=0)
 
 
 class ProductImage(models.Model):
