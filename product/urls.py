@@ -1,5 +1,6 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
+from product.filters import FilterOptionsListView
 from product.views import (
     DeleteAllProductOptionsView,
     ProductCategoryViewSet,
@@ -26,5 +27,7 @@ urlpatterns = [
         DeleteAllProductOptionsView.as_view(),
         name="product_option_delete_all",
     ),
+    path("filters/", FilterOptionsListView.as_view(), name="product_filters"),
+    # Base route
     path("", include(router.urls)),
 ]

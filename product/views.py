@@ -1,8 +1,10 @@
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from rest_framework import generics, status
+from django_filters import rest_framework as filters
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from product.filters import ProductFilter
 from shared.generic_viewset import GenericViewSet
 from shared.permissions import IsAdminOrReadOnly
 from shared.utils.s3_functions import remove_file_from_s3
@@ -36,6 +38,8 @@ class ProductViewSet(GenericViewSet):
     permissions = [IsAuthenticated, IsAdminOrReadOnly]
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = ProductFilter
 
 
 class ProductOptionViewSet(GenericViewSet):
