@@ -13,11 +13,19 @@ class ProductCategory(models.Model):
     description = models.TextField(blank=True, null=True)
 
 
+class ProductMaterial(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    name = models.CharField(max_length=255, blank=False, null=False, unique=True)
+
+
 class ProductAttributes(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
-    material = models.CharField(max_length=255, blank=False, null=False)
+    material = models.ForeignKey(ProductMaterial, on_delete=models.CASCADE, blank=False, null=False,
+                                 related_name="attributes")
     weight = models.DecimalField(
         max_digits=10, decimal_places=2, blank=False, null=False
     )

@@ -5,7 +5,7 @@ from .models import (
     ProductAttributes,
     ProductCategory,
     ProductImage,
-    ProductOption,
+    ProductOption, ProductMaterial,
 )
 
 
@@ -19,7 +19,7 @@ def _update_attributes(self, instance, attributes_data):
 
     if attributes_data:
         if instance.attributes:
-            attributes_serializer = ProductAtrtributeSerializer(
+            attributes_serializer = ProductAttributeSerializer(
                 instance.attributes, data=attributes_data, partial=True
             )
             if attributes_serializer.is_valid():
@@ -35,13 +35,19 @@ class ProductCategorySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class ProductMaterialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductMaterial
+        fields = "__all__"
+
+
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImage
         fields = ["image"]
 
 
-class ProductAtrtributeSerializer(serializers.ModelSerializer):
+class ProductAttributeSerializer(serializers.ModelSerializer):
     weight = serializers.FloatField()
 
     class Meta:
@@ -56,9 +62,14 @@ class ProductAtrtributeSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        response["material"] = ProductMaterialSerializer(instance.material).data if instance.material else None
+        return response
+
 
 class ProductOptionSerializer(serializers.ModelSerializer):
-    attributes = ProductAtrtributeSerializer()
+    attributes = ProductAttributeSerializer()
     price = serializers.FloatField()
     media = serializers.ListField(
         child=serializers.ImageField(), required=False, write_only=True
@@ -119,7 +130,7 @@ class ProductOptionSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    attributes = ProductAtrtributeSerializer(required=False)
+    attributes = ProductAttributeSerializer(required=False)
     options = ProductOptionSerializer(many=True, read_only=True)
     price = serializers.FloatField(required=True)
     media = serializers.ListField(
