@@ -34,7 +34,7 @@ To run the Django Rest Framework (DRF) server, follow these steps:
 
 2. Open your command line or terminal and run the following command:
     ```
-    docker compose-up build
+    docker compose up --build
 
     NOTE: you need to have a .env file prior
     ```
