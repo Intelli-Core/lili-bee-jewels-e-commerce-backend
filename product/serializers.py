@@ -70,7 +70,7 @@ class ProductAttributeSerializer(serializers.ModelSerializer):
 
 class ProductOptionSerializer(serializers.ModelSerializer):
     attributes = ProductAttributeSerializer()
-    price = serializers.FloatField()
+    price = serializers.DecimalField(max_digits=10, decimal_places=2, required=True)
     media = serializers.ListField(
         child=serializers.ImageField(), required=False, write_only=True
     )
@@ -132,7 +132,7 @@ class ProductOptionSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     attributes = ProductAttributeSerializer(required=False)
     options = ProductOptionSerializer(many=True, read_only=True)
-    price = serializers.FloatField(required=True)
+    price = serializers.DecimalField(max_digits=10, decimal_places=2, required=True)
     media = serializers.ListField(
         child=serializers.ImageField(), required=False, write_only=True
     )
