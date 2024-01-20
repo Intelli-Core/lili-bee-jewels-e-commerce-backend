@@ -48,6 +48,17 @@ class ProductViewSet(GenericViewSet):
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = ProductFilter
 
+    def filter_queryset(self, queryset):
+        filterset = self.filterset_class(
+            {k: v.lower() for k, v in self.request.GET.items()},
+            queryset=queryset
+        )
+
+        if filterset.is_valid():
+            return filterset.qs
+
+        return queryset
+
 
 class ProductOptionViewSet(GenericViewSet):
     protected_views = ["create", "update", "partial_update", "destroy"]
