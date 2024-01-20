@@ -1,29 +1,22 @@
 import uuid
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
+
+from shared.models import BaseModel
 from shared.validators import validate_image
 from storages.backends.s3boto3 import S3Boto3Storage
 
 
-class ProductCategory(models.Model):
-    id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+class ProductCategory(BaseModel):
     name = models.CharField(max_length=255, blank=False, null=False, unique=True)
     description = models.TextField(blank=True, null=True)
 
 
-class ProductMaterial(models.Model):
-    id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+class ProductMaterial(BaseModel):
     name = models.CharField(max_length=255, blank=False, null=False, unique=True)
 
 
-class ProductAttributes(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
+class ProductAttributes(BaseModel):
     material = models.ForeignKey(ProductMaterial, on_delete=models.CASCADE, blank=False, null=False,
                                  related_name="attributes")
     weight = models.DecimalField(
@@ -37,10 +30,7 @@ class ProductAttributes(models.Model):
     )
 
 
-class Product(models.Model):
-    id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+class Product(BaseModel):
     name = models.CharField(max_length=255, blank=False, null=False, unique=True)
     price = models.DecimalField(
         max_digits=10, decimal_places=2, blank=False, null=False, default=0.00
@@ -71,10 +61,7 @@ class Product(models.Model):
     stock = models.PositiveIntegerField(default=0)
 
 
-class ProductOption(models.Model):
-    id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+class ProductOption(BaseModel):
     price = models.DecimalField(
         max_digits=10, decimal_places=2, blank=False, null=False, default=0.00
     )
@@ -102,10 +89,7 @@ class ProductOption(models.Model):
     stock = models.PositiveIntegerField(default=0)
 
 
-class ProductImage(models.Model):
-    id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+class ProductImage(BaseModel):
     image = models.ImageField(
         upload_to="product_images",
         validators=[validate_image],
