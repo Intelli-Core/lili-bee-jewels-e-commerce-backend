@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('metal', models.CharField(max_length=255)),
+                ('material', models.CharField(max_length=255)),
                 ('weight', models.DecimalField(decimal_places=2, max_digits=10)),
                 ('sizes', django.contrib.postgres.fields.ArrayField(base_field=models.CharField(blank=True, max_length=255), blank=True, default=list, null=True, size=None)),
             ],

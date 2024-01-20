@@ -1,16 +1,18 @@
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from rest_framework import generics, status
+from django_filters import rest_framework as filters
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from product.filters import ProductFilter
 from shared.generic_viewset import GenericViewSet
 from shared.permissions import IsAdminOrReadOnly
 from shared.utils.s3_functions import remove_file_from_s3
-from .models import Product, ProductCategory, ProductImage, ProductOption
+from .models import Product, ProductCategory, ProductImage, ProductOption, ProductMaterial
 from .serializers import (
     ProductCategorySerializer,
     ProductOptionSerializer,
-    ProductSerializer,
+    ProductSerializer, ProductMaterialSerializer,
 )
 
 
@@ -31,11 +33,31 @@ class ProductCategoryViewSet(GenericViewSet):
     serializer_class = ProductCategorySerializer
 
 
+class ProductMaterialViewSet(GenericViewSet):
+    protected_views = ["create", "update", "partial_update", "destroy"]
+    permissions = [IsAuthenticated, IsAdminOrReadOnly]
+    queryset = ProductMaterial.objects.all()
+    serializer_class = ProductMaterialSerializer
+
+
 class ProductViewSet(GenericViewSet):
     protected_views = ["create", "update", "partial_update", "destroy"]
     permissions = [IsAuthenticated, IsAdminOrReadOnly]
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = ProductFilter
+
+    def filter_queryset(self, queryset):
+        filterset = self.filterset_class(
+            {k: v.lower() for k, v in self.request.GET.items()},
+            queryset=queryset
+        )
+
+        if filterset.is_valid():
+            return filterset.qs
+
+        return queryset
 
 
 class ProductOptionViewSet(GenericViewSet):
@@ -74,5 +96,18 @@ class DeleteAllProductOptionsView(generics.GenericAPIView):
 
         return Response(
             {"detail": "All product options has been deleted"},
+            status=status.HTTP_204_NO_CONTENT,
+        )
+
+
+class DeleteAllProductMaterialsView(generics.GenericAPIView):
+    queryset = ProductMaterial.objects.all()
+    permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
+
+    def delete(self, request, *args, **kwargs):
+        self.get_queryset().delete()
+
+        return Response(
+            {"detail": "All product materials has been deleted"},
             status=status.HTTP_204_NO_CONTENT,
         )
