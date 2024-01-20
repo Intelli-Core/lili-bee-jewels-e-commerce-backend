@@ -3,7 +3,7 @@ from django.db.models import Count, F
 from django.db.models.functions import Lower
 from rest_framework import generics
 from rest_framework.response import Response
-from django_filters import rest_framework as filters
+from django_filters import rest_framework as filters, OrderingFilter
 from django_filters.constants import EMPTY_VALUES
 from product.models import Product, ProductAttributes, ProductCategory, ProductMaterial
 
@@ -19,6 +19,19 @@ class ProductFilter(filters.FilterSet):
     category = filters.CharFilter(field_name="category__name", lookup_expr="iexact")
     material = filters.CharFilter(field_name="attributes__material__name", lookup_expr="iexact")
     size = ArrayFilter(field_name="attributes__sizes")
+    sort = OrderingFilter(
+        # tuple-mapping retains the order
+        fields=(
+            ('-created_at', 'newest'),
+            ('price', 'price_asc'),
+            ('-price', 'price_desc'),
+        ),
+    )
+
+
+class Meta:
+    model = Product
+    fields = ["category", "material", "size", "sort"]
 
     class Meta:
         model = Product
