@@ -12,7 +12,7 @@ class ArrayFilter(filters.Filter):
     def filter(self, qs, value):
         if value in EMPTY_VALUES:
             return qs
-        return qs.filter(**{f"{self.field_name}__contains": [str(value)]})
+        return qs.filter(**{f"{self.field_name}__contains": [float(value)]})
 
 
 class ProductFilter(filters.FilterSet):
