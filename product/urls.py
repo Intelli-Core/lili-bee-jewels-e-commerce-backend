@@ -6,7 +6,7 @@ from product.views import (
     ProductCategoryViewSet,
     ProductOptionViewSet,
     ProductViewSet,
-    DeleteAllProductsView, ProductMaterialViewSet, DeleteAllProductMaterialsView,
+    DeleteAllProductsView, ProductMaterialViewSet, DeleteAllProductMaterialsView, DeleteProductMediaView
 )
 
 app_name = "product"
@@ -33,6 +33,7 @@ urlpatterns = [
         DeleteAllProductMaterialsView.as_view(),
         name="product_material_delete_all",
     ),
+    path('media/<uuid:product_id>/', DeleteProductMediaView.as_view(), name='delete_product_media'),
     path("filters/", FilterOptionsListView.as_view(), name="product_filters"),
     # Base route
     path("", include(router.urls)),

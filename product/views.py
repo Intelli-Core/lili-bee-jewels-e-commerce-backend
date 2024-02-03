@@ -1,3 +1,4 @@
+from urllib.parse import urlparse
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from rest_framework import generics, status
@@ -110,4 +111,50 @@ class DeleteAllProductMaterialsView(generics.GenericAPIView):
         return Response(
             {"detail": "All product materials has been deleted"},
             status=status.HTTP_204_NO_CONTENT,
+        )
+
+
+class DeleteProductMediaView(generics.GenericAPIView):
+    queryset = ProductImage.objects.all()
+    permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
+
+    def delete(self, request, *args, **kwargs):
+        product_id = kwargs.get("product_id", None)
+        image_url = request.data.get("image_url", None)
+
+        if not product_id or not image_url:
+            return Response(
+                {"detail": "Product ID or Image URL not provided"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        product = Product.objects.filter(id=product_id).first()
+
+        if not product:
+            return Response(
+                {"detail": "Product not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        product_images = self.get_queryset().filter(product=product)
+
+        # Parse the base URL from the image_url
+        parsed_url = urlparse(image_url)
+        base_url = parsed_url.netloc + parsed_url.path
+
+        for product_image in product_images:
+            # Parse the base URL from the product_image URL
+            parsed_product_image_url = urlparse(product_image.image.url)
+            product_image_base_url = parsed_product_image_url.netloc + parsed_product_image_url.path
+
+            if product_image_base_url == base_url:
+                product_image.delete()
+                return Response(
+                    {"detail": "Product image has been deleted"},
+                    status=status.HTTP_204_NO_CONTENT,
+                )
+
+        return Response(
+            {"detail": "Product image not found"},
+            status=status.HTTP_404_NOT_FOUND,
         )
