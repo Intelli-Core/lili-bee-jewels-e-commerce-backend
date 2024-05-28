@@ -49,4 +49,5 @@ urlpatterns = [
     path(f"{api_prefix}auth/", include("shared.auth.urls")),
     path(f"{api_prefix}customer/", include("customer.urls")),
     path(f"{api_prefix}product/", include("product.urls")),
+    path(f"{api_prefix}cart/", include("cart.urls")),
 ]

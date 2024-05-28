@@ -30,6 +30,10 @@ DEBUG = config("DEBUG", cast=bool)
 
 ALLOWED_HOSTS = []
 
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://localhost:8000',
+]
 
 # Application definition
 
@@ -46,6 +50,7 @@ INSTALLED_APPS = [
     "boto3",
     "drf_yasg",
     "django_filters",
+    "corsheaders",
 
     # Rest framework
     "rest_framework",
@@ -59,9 +64,11 @@ INSTALLED_APPS = [
     "users",
     "customer",
     "product",
+    "cart",
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
