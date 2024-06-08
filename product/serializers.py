@@ -5,7 +5,8 @@ from .models import (
     ProductAttributes,
     ProductCategory,
     ProductImage,
-    ProductOption, ProductMaterial,
+    ProductOption,
+    ProductMaterial,
 )
 
 
@@ -27,6 +28,8 @@ def _update_attributes(self, instance, attributes_data):
         else:
             attributes = ProductAttributes.objects.create(**attributes_data)
             instance.attributes = attributes
+    else:
+        instance.attributes = None
 
 
 class ProductCategorySerializer(serializers.ModelSerializer):
@@ -64,7 +67,11 @@ class ProductAttributeSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         response = super().to_representation(instance)
-        response["material"] = ProductMaterialSerializer(instance.material).data if instance.material else None
+        response["material"] = (
+            ProductMaterialSerializer(instance.material).data
+            if instance.material
+            else None
+        )
         return response
 
 
