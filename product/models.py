@@ -17,8 +17,13 @@ class ProductMaterial(BaseModel):
 
 
 class ProductAttributes(BaseModel):
-    material = models.ForeignKey(ProductMaterial, on_delete=models.CASCADE, blank=False, null=False,
-                                 related_name="attributes")
+    material = models.ForeignKey(
+        ProductMaterial,
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+        related_name="attributes",
+    )
     weight = models.DecimalField(
         max_digits=10, decimal_places=2, blank=False, null=False
     )
@@ -31,6 +36,12 @@ class ProductAttributes(BaseModel):
 
 
 class Product(BaseModel):
+    STATUS_CHOICES = [
+        ("ACTIVE", "Active"),
+        ("DRAFT", "Draft"),
+        ("ARCHIVED", "Archived"),
+    ]
+
     name = models.CharField(max_length=255, blank=False, null=False, unique=True)
     price = models.DecimalField(
         max_digits=10, decimal_places=2, blank=False, null=False, default=0.00
@@ -59,6 +70,11 @@ class Product(BaseModel):
         null=True,
     )
     stock = models.PositiveIntegerField(default=0)
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="ACTIVE",
+    )
 
 
 class ProductOption(BaseModel):
