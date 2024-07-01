@@ -137,7 +137,7 @@ class ProductOptionSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    attributes = ProductAttributeSerializer(required=False)
+    # attributes = ProductAttributeSerializer(required=False, read_only=False)
     options = ProductOptionSerializer(many=True, read_only=True)
     price = serializers.DecimalField(max_digits=10, decimal_places=2, required=True)
     media = serializers.ListField(
@@ -152,14 +152,14 @@ class ProductSerializer(serializers.ModelSerializer):
         # Media
         media_data = validated_data.pop("media", [])
 
-        # Atributes
-        attributes_data = validated_data.pop("attributes", None)
-        attributes = (
-            ProductAttributes.objects.create(**attributes_data)
-            if attributes_data
-            else None
-        )
-        product = Product.objects.create(attributes=attributes, **validated_data)
+        # # Atributes
+        # attributes_data = validated_data.pop("attributes", None)
+        # attributes = (
+        #     ProductAttributes.objects.create(**attributes_data)
+        #     if attributes_data
+        #     else None
+        # )
+        product = Product.objects.create(**validated_data)
 
         for image in media_data:
             ProductImage.objects.create(product=product, image=image)
@@ -176,10 +176,10 @@ class ProductSerializer(serializers.ModelSerializer):
         for image_data in media_data:
             ProductImage.objects.create(product=instance, image=image_data)
 
-        # Attributes
-        attributes_data = validated_data.pop("attributes", None)
-        _update_attributes(self, instance, attributes_data)
-
+        # # Attributes
+        # attributes_data = validated_data.pop("attributes", None)
+        # _update_attributes(self, instance, attributes_data)
+        #
         # Update all other fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
@@ -189,6 +189,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         response = super().to_representation(instance)
+        response["attributes"] = ProductAttributeSerializer(instance.attributes).data
         response["category"] = ProductCategorySerializer(instance.category).data
         response["media"] = ProductImageSerializer(instance.media.all(), many=True).data
         for option in response["options"]:

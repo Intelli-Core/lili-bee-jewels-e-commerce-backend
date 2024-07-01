@@ -9,11 +9,20 @@ from product.filters import ProductFilter
 from shared.generic_viewset import GenericViewSet
 from shared.permissions import IsAdminOrReadOnly
 from shared.utils.s3_functions import remove_file_from_s3
-from .models import Product, ProductCategory, ProductImage, ProductOption, ProductMaterial
+from .models import (
+    Product,
+    ProductAttributes,
+    ProductCategory,
+    ProductImage,
+    ProductOption,
+    ProductMaterial,
+)
 from .serializers import (
+    ProductAttributeSerializer,
     ProductCategorySerializer,
     ProductOptionSerializer,
-    ProductSerializer, ProductMaterialSerializer,
+    ProductSerializer,
+    ProductMaterialSerializer,
 )
 
 
@@ -51,8 +60,7 @@ class ProductViewSet(GenericViewSet):
 
     def filter_queryset(self, queryset):
         filterset = self.filterset_class(
-            {k: v.lower() for k, v in self.request.GET.items()},
-            queryset=queryset
+            {k: v.lower() for k, v in self.request.GET.items()}, queryset=queryset
         )
 
         if filterset.is_valid():
@@ -66,6 +74,13 @@ class ProductOptionViewSet(GenericViewSet):
     permissions = [IsAuthenticated, IsAdminOrReadOnly]
     queryset = ProductOption.objects.all()
     serializer_class = ProductOptionSerializer
+
+
+class ProductAttributesViewSet(GenericViewSet):
+    protected_views = ["create", "update", "partial_update", "destroy"]
+    permissions = [IsAuthenticated, IsAdminOrReadOnly]
+    queryset = ProductAttributes.objects.all()
+    serializer_class = ProductAttributeSerializer
 
 
 class DeleteAllProductsView(generics.GenericAPIView):
@@ -145,7 +160,9 @@ class DeleteProductMediaView(generics.GenericAPIView):
         for product_image in product_images:
             # Parse the base URL from the product_image URL
             parsed_product_image_url = urlparse(product_image.image.url)
-            product_image_base_url = parsed_product_image_url.netloc + parsed_product_image_url.path
+            product_image_base_url = (
+                parsed_product_image_url.netloc + parsed_product_image_url.path
+            )
 
             if product_image_base_url == base_url:
                 product_image.delete()
