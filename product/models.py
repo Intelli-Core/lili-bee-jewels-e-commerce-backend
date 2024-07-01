@@ -1,11 +1,9 @@
-import uuid
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 
 from shared.models import BaseModel
 from shared.validators import validate_image
 from storages.backends.s3boto3 import S3Boto3Storage
-
 
 class ProductCategory(BaseModel):
     name = models.CharField(max_length=255, blank=False, null=False, unique=True)
