@@ -23,16 +23,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-lc1p2)lu=l-0xkkf#2^vhn(eq_0@r)=%6ba@d$*&d$e^=izic*"
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["https://lbjec-backend-production.up.railway.app"]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:8000",
+    "https://lbjec-backend-production.up.railway.app"
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://lbjec-backend-production.up.railway.app"
 ]
 
 # Application definition
