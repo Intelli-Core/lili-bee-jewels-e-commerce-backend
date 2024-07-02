@@ -1,11 +1,10 @@
-version: '3.8'
 name: lbjec-server
 services:
   dev:
     build: .
     container_name: lbjec-dev
-    command: sh -c "python manage.py makemigrations --no-input && 
-          python manage.py migrate --no-input --settings=lbjec_backend.settings && python manage.py runserver 0.0.0.0:8000 && wait"
+    command: sh -c "python manage.py makemigrations --no-input &&
+      python manage.py migrate --no-input --settings=lbjec_backend.settings && python manage.py runserver 0.0.0.0:8000 && wait"
     environment:
       DJANGO_SETTINGS_MODULE: lbjec_backend.settings
       AWS_QUERYSTRING_EXPIRE: ${AWS_QUERYSTRING_EXPIRE}
